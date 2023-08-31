@@ -6,6 +6,7 @@ import { UserServices } from './user.services';
 
 const getUser = catchAsync(async (req: Request, res: Response) => {
   const result = await UserServices.getUser();
+
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -18,10 +19,25 @@ const getSingleUser = catchAsync(async (req: Request, res: Response) => {
   const id = req.params.id;
 
   const result = await UserServices.getSingleUser(id);
+
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Users retrieved successfully',
+    message: 'User retrieved successfully',
+    data: result,
+  });
+});
+
+const updateUser = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const data = req.body;
+
+  const result = await UserServices.updateUser(id, data);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User updated successfully',
     data: result,
   });
 });
@@ -29,4 +45,5 @@ const getSingleUser = catchAsync(async (req: Request, res: Response) => {
 export const UserController = {
   getUser,
   getSingleUser,
+  updateUser,
 };
