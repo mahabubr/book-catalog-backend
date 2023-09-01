@@ -12,4 +12,6 @@ router.post(
 router.get('/', CategoryController.getAllCategory);
 router.get('/:id', CategoryController.getSingleCategory);
 
+router.patch('/:id', CategoryController.updateCategory);
+
 export const CategoryRoutes = router;
