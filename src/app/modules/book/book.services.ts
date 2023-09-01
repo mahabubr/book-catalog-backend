@@ -3,6 +3,7 @@ import { paginationHelpers } from '../../../helpers/paginationHelper';
 import { IGenericResponse } from '../../../interfaces/common';
 import { IPaginationOptions } from '../../../interfaces/pagination';
 import prisma from '../../../shared/prisma';
+import { BookSearchableField } from './book.constants';
 import { IBookFilter } from './book.interface';
 
 const createBook = async (payload: Book): Promise<Book> => {
@@ -23,10 +24,36 @@ const getAllBooks = async (
   const { page, size, skip, sortBy, sortOrder } =
     paginationHelpers.calculatePagination(options);
 
-  const andConditions: [] = [];
+  const { search, category, maxPrice, minPrice } = filters;
 
-  const whereConditions: Prisma.BookWhereInput =
-    andConditions.length > 0 ? { AND: andConditions } : {};
+  const whereConditions: Prisma.BookWhereInput = {};
+
+  if (search) {
+    whereConditions.OR = BookSearchableField.map(field => ({
+      [field]: {
+        contains: search,
+        mode: 'insensitive',
+      },
+    }));
+  }
+
+  if (category) {
+    whereConditions.category = {
+      id: category,
+    };
+  }
+
+  if (maxPrice) {
+    whereConditions.price = {
+      lte: parseFloat(maxPrice),
+    };
+  }
+
+  if (minPrice) {
+    whereConditions.price = {
+      gte: parseFloat(minPrice),
+    };
+  }
 
   const result = await prisma.book.findMany({
     where: whereConditions,
