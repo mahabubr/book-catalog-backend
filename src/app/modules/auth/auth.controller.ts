@@ -17,6 +17,20 @@ const userSignUp = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const userLogin = catchAsync(async (req: Request, res: Response) => {
+  const data = req.body;
+
+  const result = await AuthServices.loginUser(data);
+
+  sendResponse<string>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User signin successfully!',
+    data: result,
+  });
+});
+
 export const AuthController = {
   userSignUp,
+  userLogin,
 };
