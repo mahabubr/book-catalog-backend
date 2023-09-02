@@ -14,17 +14,17 @@ const auth =
       if (!token) {
         throw new ApiError(httpStatus.UNAUTHORIZED, 'You are not authorized');
       }
+
       // verify token
       let verifiedUser = null;
-
       verifiedUser = jwtHelpers.verifyToken(token, config.jwt.secret as Secret);
+      req.user = verifiedUser;
 
-      req.user = verifiedUser; // role  , userid
-
-      // role diye guard korar jnno
+      // role  guard
       if (requiredRoles.length && !requiredRoles.includes(verifiedUser.role)) {
-        throw new ApiError(httpStatus.FORBIDDEN, 'Forbidden');
+        throw new ApiError(httpStatus.FORBIDDEN, 'Forbidden user');
       }
+
       next();
     } catch (error) {
       next(error);
