@@ -42,8 +42,24 @@ const getSpecificOrders = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getSingleOrder = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.orderId;
+
+  const userData = req.user;
+
+  const result = await OrderServices.getSingleOrder(userData, id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Order fetched successfully',
+    data: result,
+  });
+});
+
 export const OrderController = {
   createOrder,
   getAllOrders,
   getSpecificOrders,
+  getSingleOrder,
 };
