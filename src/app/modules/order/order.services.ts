@@ -1,5 +1,6 @@
 import { Order } from '@prisma/client';
 import httpStatus from 'http-status';
+import { JwtPayload } from 'jsonwebtoken';
 import ApiError from '../../../errors/ApiError';
 import prisma from '../../../shared/prisma';
 
@@ -16,18 +17,16 @@ const createOrder = async (data: [], userId: string): Promise<Order> => {
   return result;
 };
 
-const getAllOrders = async (): Promise<Order[]> => {
+const getAllOrders = async (userData: JwtPayload | null): Promise<Order[]> => {
+  if (userData && userData?.role === 'customer') {
+    return await prisma.order.findMany({
+      where: {
+        userId: userData?.userId,
+      },
+    });
+  }
+
   const result = await prisma.order.findMany();
-
-  return result;
-};
-
-const getSpecificOrders = async (userId: string): Promise<Order[]> => {
-  const result = await prisma.order.findMany({
-    where: {
-      userId,
-    },
-  });
 
   return result;
 };
@@ -53,6 +52,5 @@ const getSingleOrder = async (
 export const OrderServices = {
   createOrder,
   getAllOrders,
-  getSpecificOrders,
   getSingleOrder,
 };
